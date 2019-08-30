@@ -1,0 +1,8 @@
+{
+    "autoload": {
+        "files": [ "src/rw-search-converter.php" ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    }
+}
