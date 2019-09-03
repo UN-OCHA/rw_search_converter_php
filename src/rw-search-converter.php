@@ -493,7 +493,7 @@ function getApiUrl($resource, $query, $appname) {
 /**
  * Convert a search query to an API query.
  */
-function convertToAPI($url) {
+function convertToAPI($url, $appname) {
   global $paths;
   global $resources;
   if (!$url) {
@@ -513,9 +513,6 @@ function convertToAPI($url) {
   $path = $paths[$path];
   $resource = $path['resource'];
   $fields = $resources[$resource];
-
-  // Application name.
-  $appname = 'unocha-org';
 
   // Search query
   $search = '';
