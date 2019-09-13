@@ -54,4 +54,11 @@ final class SearchConverter extends TestCase
       ];
       $this->assertTrue(in_array($aurl, $aurls));
     }
+
+    public function testSearchQuery() : void
+    {
+      $aurl = convertToAPI('https://reliefweb.int/updates?search=Test', 'unocha-org');
+      $success = 'https://api.reliefweb.int/v1/reports?appname=unocha-org&profile=list&preset=latest&slim=1&query[value]=Test&query[operator]=AND';
+      $this->assertEquals($aurl, $success);
+    }
 }

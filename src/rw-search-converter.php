@@ -456,7 +456,10 @@ function getQueryString($search, $filter) {
   if (!empty($search)) {
     $filters[] = '(' . $search . ')';
   }
-  $filters[] = stringifyFilter($filter);
+  $stringifiedFilter = stringifyFilter($filter);
+  if (!empty($stringifiedFilter)) {
+    $filters[] = $stringifiedFilter;
+  }
 
   $query = '';
   if (count($filters) > 1) {
@@ -521,12 +524,11 @@ function convertToAPI($url, $appname) {
   }
 
   // Advanced search, facets and resource pre-filter combined filter.
-  $condition1 = parseAdvancedQuery($fields, $params['advanced-search']);
-  $condition2 = convertFacets($fields, $params);
   $conditions = [];
-  if (!empty($condition1)) {
-    $conditions[] = $condition1;
+  if (isset($params['advanced-search']) && !empty($params['advanced-search'])) {
+    $conditions[] = parseAdvancedQuery($fields, $params['advanced-search']);
   }
+  $condition2 = convertFacets($fields, $params);
   if (!empty($condition2)) {
     $conditions[] = $condition2;
   }
