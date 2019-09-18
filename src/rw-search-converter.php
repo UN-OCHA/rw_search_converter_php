@@ -309,11 +309,14 @@ function combineConditions($operator = 'AND', $conditions) {
        $result[] = $condition;
     }
     // Different operator or negated condition -  keep as is.
-    elseif ($condition['operator'] !== $operator || $condition['negate']) {
+    elseif ($condition['operator'] !== $operator || isset($condition['negate'])) {
       $result[] = $condition;
     }
     else {
       // Store the values for the field to combine later.
+      if (!isset($filters[$field])) {
+        $filters[$field] = array();
+      }
       $filters[$field] = array_merge($filters[$field], $value);
     }
   }
@@ -398,27 +401,30 @@ function convertFacets($fields, $params) {
       $shortcut = $fields[$key][0];
       $operator = $fields[$key][1];
       $field = $fields[$key][2];
-      $values = $fields[$key][3];
+      $values = isset($fields[$key][3]) ? $fields[$key][3] : array();
+      $pvalue = NULL;
 
       // Date field - parse range format.
       if (strpos($field, 'date') !== FALSE) {
-        $value = parseDateRange($value);
+        $pvalue = parseDateRange($value);
       }
       // Term reference fields - ensure the term id is an integer.
       else if (substr($field, -3) == '.id') {
+        $pvalue = array();
         $vals = explode('.', $value);
         foreach ($vals as $val) {
           if (intval($val) !== 0) {
-            $value[] = intval($val);
+            $pvalue[] = intval($val);
           }
         }
       }
       // Fixed values fields - ensure the value(s) are in the list.
-      else if ($values) {
+      else if (!empty($values)) {
+        $pvalue = array();
         $vals = explode('.', $value);
         foreach ($vals as $val) {
-          if (in_array($val, $values['includes'])) {
-            $value[] = $val;
+          if (in_array($val, $values)) {
+            $pvalue[] = $val;
           }
         }
       }
@@ -427,11 +433,11 @@ function convertFacets($fields, $params) {
         continue;
       }
 
-      if ($value) {
+      if ($pvalue && !empty($pvalue)) {
         $conditions[] = [
           'field' => $field,
           'operator' => $operator,
-          'value' => $value
+          'value' => $pvalue
         ];
       }
     }

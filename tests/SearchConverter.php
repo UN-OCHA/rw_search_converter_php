@@ -61,4 +61,11 @@ final class SearchConverter extends TestCase
       $success = 'https://api.reliefweb.int/v1/reports?appname=unocha-org&profile=list&preset=latest&slim=1&query[value]=Test&query[operator]=AND';
       $this->assertEquals($aurl, $success);
     }
+
+    public function testComplexQuery() : void
+    {
+      $aurl = convertToAPI('https://reliefweb.int/updates?primary_country=254&source=1503&format=12570&search=title%3A%22Global+Humanitarian+Overview%22+OR+title%3A%22Humanitarian+Funding+Update%22', 'unocha-org');
+      $success = 'https://api.reliefweb.int/v1/reports?appname=unocha-org&profile=list&preset=latest&slim=1&query[value]=%28title%3A%22Global+Humanitarian+Overview%22+OR+title%3A%22Humanitarian+Funding+Update%22%29+AND+%28format.id%3A%2812570%29+AND+primary_country.id%3A254+AND+source.id%3A1503%29&query[operator]=AND';
+      $this->assertEquals($aurl, $success);
+    }
 }
